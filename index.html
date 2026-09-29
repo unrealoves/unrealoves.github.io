@@ -1,1 +1,508 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern OSINT Directory</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;       /* Глубокий slate */
+            --bg-secondary: #1e293b;     /* Карточки */
+            --bg-hover: #334155;         /* Ховер эффект */
+            --text-primary: #f8fafc;     /* Белый текст */
+            --text-secondary: #94a3b8;   /* Серый текст */
+            --accent: #3b82f6;           /* Спокойный синий */
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            --border: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --radius: 12px;
+            --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header & Search --- */
+        header {
+            padding: 3rem 1.5rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.25rem 1rem 3rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: var(--font-main);
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* --- Category Cards --- */
+        .category-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            border-color: var(--accent);
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .category-title .icon { font-size: 1.2rem; }
+
+        /* --- Tool Links --- */
+        .tool-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .tool-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .tool-link:hover {
+            background: var(--bg-hover);
+            border-color: var(--border);
+            color: #fff;
+        }
+
+        .tool-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .tool-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+            font-weight: 400;
+        }
+
+        /* --- Badges --- */
+        .badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .badge-tg { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge-web { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge-os { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .badge-featured { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .disclaimer {
+            max-width: 600px;
+            margin: 0 auto 1rem;
+            padding: 1rem;
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 8px;
+            color: #fbbf24;
+        }
+
+        /* --- Utilities --- */
+        .hidden { display: none !important; }
+        
+        @media (max-width: 640px) {
+            h1 { font-size: 1.5rem; }
+            main { grid-template-columns: 1fr; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>OSINT Directory</h1>
+        <p class="subtitle">Современная коллекция инструментов для разведки по открытым источникам</p>
+        
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Поиск инструментов (например: telegram, email, shodan)...">
+        </div>
+    </header>
+
+    <main id="toolsContainer">
+        
+        <!-- Категория: Избранное (Твои ссылки) -->
+        <div class="category-card" data-category="featured telegram">
+            <div class="category-title"><span class="icon">⭐</span> Избранное & Telegram</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://osintframework.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">OSINT Framework</div>
+                            <div class="tool-desc">Оригинальный интерактивный фреймворк</div>
+                        </div>
+                        <span class="badge badge-featured">Featured</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/timbersvek" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Timber Svek</div>
+                            <div class="tool-desc">Telegram канал</div>
+                        </div>
+                        <span class="badge badge-tg">Telegram</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/pl12_fs_probiv_bot" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">PL12 FS Probiv</div>
+                            <div class="tool-desc">Telegram бот</div>
+                        </div>
+                        <span class="badge badge-tg">Bot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/timbersclanbot" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Timber Clan Bot</div>
+                            <div class="tool-desc">Telegram бот</div>
+                        </div>
+                        <span class="badge badge-tg">Bot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/probiv_spy_c6uv_bot" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Probiv Spy</div>
+                            <div class="tool-desc">Telegram бот</div>
+                        </div>
+                        <span class="badge badge-tg">Bot</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Категория: Имена пользователей -->
+        <div class="category-card" data-category="username social">
+            <div class="category-title"><span class="icon">👤</span> Поиск по никнейму</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://github.com/sherlock-project/sherlock" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Sherlock</div>
+                            <div class="tool-desc">Поиск аккаунтов по юзернейму (CLI)</div>
+                        </div>
+                        <span class="badge badge-os">Open Source</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://whatsmyname.app/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">WhatsMyName</div>
+                            <div class="tool-desc">Веб-версия поиска по никам</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://namechk.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Namechk</div>
+                            <div class="tool-desc">Проверка доступности имён в соцсетях</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Категория: Email и утечки -->
+        <div class="category-card" data-category="email breach">
+            <div class="category-title"><span class="icon">📧</span> Email & Утечки</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://epieos.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Epieos</div>
+                            <div class="tool-desc">Поиск аккаунтов Google/Skype по email</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://haveibeenpwned.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Have I Been Pwned</div>
+                            <div class="tool-desc">Проверка утечек паролей и email</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://hunter.io/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Hunter.io</div>
+                            <div class="tool-desc">Поиск корпоративных email-адресов</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Категория: Домены и Сеть -->
+        <div class="category-card" data-category="domain ip network">
+            <div class="category-title"><span class="icon">🌐</span> Домены, IP и Сеть</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://www.shodan.io/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Shodan</div>
+                            <div class="tool-desc">Поисковик для IoT и сетевых устройств</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://censys.io/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Censys</div>
+                            <div class="tool-desc">Анализ хостов и сертификатов</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.virustotal.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">VirusTotal</div>
+                            <div class="tool-desc">Анализ файлов, доменов и IP</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://dnsdumpster.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">DNSDumpster</div>
+                            <div class="tool-desc">Исследование DNS-записей домена</div>
+                        </div>
+                        <span class="badge badge-os">Free</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Категория: Изображения и Медиа -->
+        <div class="category-card" data-category="image photo video media">
+            <div class="category-title"><span class="icon">🖼️</span> Изображения и Видео</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://yandex.ru/images/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Yandex Images</div>
+                            <div class="tool-desc">Лучший обратный поиск по картинкам (RF/CIS)</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.invid-project.eu/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">InVID WeVerify</div>
+                            <div class="tool-desc">Плагин для верификации видео и фото</div>
+                        </div>
+                        <span class="badge badge-os">Plugin</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://forensically.herokuapp.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Forensically</div>
+                            <div class="tool-desc">Анализ метаданных и клонирование изображений</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Категория: Социальные сети и Архивы -->
+        <div class="category-card" data-category="social archive telegram">
+            <div class="category-title"><span class="icon">🗄️</span> Соцсети и Архивы</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://tgstat.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">TGStat</div>
+                            <div class="tool-desc">Аналитика Telegram-каналов</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://telemetr.io/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Telemetrio</div>
+                            <div class="tool-desc">Каталог и аналитика Telegram</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://web.archive.org/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Wayback Machine</div>
+                            <div class="tool-desc">Архив удалённых веб-страниц</div>
+                        </div>
+                        <span class="badge badge-os">Archive</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="disclaimer">
+            ⚠️ <strong>Disclaimer:</strong> Используйте эти инструменты только в законных целях, для этичного хакинга, журналистских расследований или защиты собственной информации. Соблюдайте законодательство вашей страны.
+        </div>
+        <p>Hosted on GitHub Pages • Modern OSINT Directory</p>
+    </footer>
+
+    <script>
+        // Живой поиск по инструментам
+        const searchInput = document.getElementById('searchInput');
+        const categoryCards = document.querySelectorAll('.category-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            categoryCards.forEach(card => {
+                const tools = card.querySelectorAll('.tool-link');
+                let hasVisibleTools = false;
+
+                tools.forEach(tool => {
+                    const name = tool.querySelector('.tool-name').textContent.toLowerCase();
+                    const desc = tool.querySelector('.tool-desc').textContent.toLowerCase();
+                    const category = card.getAttribute('data-category').toLowerCase();
+
+                    if (name.includes(query) || desc.includes(query) || category.includes(query)) {
+                        tool.classList.remove('hidden');
+                        hasVisibleTools = true;
+                    } else {
+                        tool.classList.add('hidden');
+                    }
+                });
+
+                // Скрываем всю карточку, если в ней не осталось видимых инструментов
+                if (hasVisibleTools) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
