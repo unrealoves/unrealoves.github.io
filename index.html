@@ -3,284 +3,505 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSINT Tools Directory</title>
+    <title>Modern OSINT Directory</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --accent-color: #00ff9d; /* Неоновый зелёный */
-            --accent-secondary: #00b8ff; /* Неоновый голубой */
-            --line-color: #333;
-            --font-mono: 'Courier New', Courier, monospace;
+            --bg-primary: #0f172a;       /* Глубокий slate */
+            --bg-secondary: #1e293b;     /* Карточки */
+            --bg-hover: #334155;         /* Ховер эффект */
+            --text-primary: #f8fafc;     /* Белый текст */
+            --text-secondary: #94a3b8;   /* Серый текст */
+            --accent: #3b82f6;           /* Спокойный синий */
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            --border: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --radius: 12px;
+            --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-mono);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
             line-height: 1.6;
-            padding: 2rem;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* --- Header & Search --- */
         header {
+            padding: 3rem 1.5rem 2rem;
             text-align: center;
-            margin-bottom: 3rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--line-color);
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
         }
 
-        header h1 {
-            color: var(--accent-color);
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        header p {
-            color: #888;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        /* Древовидная структура */
-        .tree {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .tree ul {
-            padding-left: 20px;
-            list-style: none;
-            position: relative;
-        }
-
-        .tree ul::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: var(--line-color);
-        }
-
-        .tree li {
-            margin: 10px 0;
-            position: relative;
-            padding-left: 20px;
-        }
-
-        .tree li::before {
-            content: '';
-            position: absolute;
-            left: -20px;
-            top: 15px;
-            width: 15px;
-            height: 1px;
-            background: var(--line-color);
-        }
-
-        .tree li::after {
-            content: '';
-            position: absolute;
-            left: -20px;
-            top: 15px;
-            width: 1px;
-            height: 100%;
-            background: var(--line-color);
-        }
-
-        .tree li:last-child::after {
-            height: 15px;
-        }
-
-        /* Узлы дерева */
-        .node {
-            display: inline-flex;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: 1px solid var(--line-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--text-color);
+        .subtitle {
+            color: var(--text-secondary);
             font-size: 0.95rem;
+            margin-bottom: 2rem;
         }
 
-        .node:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 8px rgba(0, 255, 157, 0.2);
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.25rem 1rem 3rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: var(--font-main);
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* --- Category Cards --- */
+        .category-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            border-color: var(--accent);
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .category-title .icon { font-size: 1.2rem; }
+
+        /* --- Tool Links --- */
+        .tool-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .tool-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .tool-link:hover {
+            background: var(--bg-hover);
+            border-color: var(--border);
             color: #fff;
         }
 
-        .node.root {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            border-color: var(--accent-color);
-            cursor: default;
+        .tool-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
         }
 
-        .node.category {
-            color: var(--accent-secondary);
-            border-color: var(--accent-secondary);
+        .tool-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+            font-weight: 400;
         }
 
-        .node.link {
-            color: #fff;
+        /* --- Badges --- */
+        .badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
         }
 
-        .node.link::before {
-            content: '🔗 ';
-            margin-right: 8px;
-        }
+        .badge-tg { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge-web { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge-os { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .badge-featured { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
 
-        .node.telegram::before {
-            content: '✈️ ';
-            margin-right: 8px;
-        }
-
-        .toggle-icon {
-            margin-right: 8px;
-            font-size: 0.8rem;
-            transition: transform 0.3s ease;
-            display: inline-block;
-        }
-
-        .expanded > .node .toggle-icon {
-            transform: rotate(90deg);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 600px) {
-            body { padding: 1rem; }
-            header h1 { font-size: 1.8rem; }
-            .node { font-size: 0.85rem; padding: 6px 12px; }
-        }
-
+        /* --- Footer --- */
         footer {
             text-align: center;
-            margin-top: 4rem;
-            color: #555;
+            padding: 2rem;
+            color: var(--text-secondary);
             font-size: 0.8rem;
-            border-top: 1px solid var(--line-color);
-            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .disclaimer {
+            max-width: 600px;
+            margin: 0 auto 1rem;
+            padding: 1rem;
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 8px;
+            color: #fbbf24;
+        }
+
+        /* --- Utilities --- */
+        .hidden { display: none !important; }
+        
+        @media (max-width: 640px) {
+            h1 { font-size: 1.5rem; }
+            main { grid-template-columns: 1fr; padding: 1rem; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>OSINT DIRECTORY</h1>
-        <p>Open Source Intelligence Tools & Resources</p>
+        <h1>OSINT Directory</h1>
+        <p class="subtitle">Современная коллекция инструментов для разведки по открытым источникам</p>
+        
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Поиск инструментов (например: telegram, email, shodan)...">
+        </div>
     </header>
 
-    <div class="tree">
-        <ul>
-            <li>
-                <span class="node root">OSINT Framework</span>
-                <ul>
-                    <!-- Категория 1: Общие фреймворки -->
-                    <li class="expanded">
-                        <span class="node category" onclick="toggleNode(this)">
-                            <span class="toggle-icon">▶</span> 🌐 General Frameworks
-                        </span>
-                        <ul>
-                            <li>
-                                <a href="https://osintframework.com/" target="_blank" class="node link">OSINT Framework (Original)</a>
-                            </li>
-                        </ul>
-                    </li>
+    <main id="toolsContainer">
+        
+        <!-- Категория: Избранное (Твои ссылки) -->
+        <div class="category-card" data-category="featured telegram">
+            <div class="category-title"><span class="icon">⭐</span> Избранное & Telegram</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://osintframework.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">OSINT Framework</div>
+                            <div class="tool-desc">Оригинальный интерактивный фреймворк</div>
+                        </div>
+                        <span class="badge badge-featured">Featured</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/timbersvek" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Timber Svek</div>
+                            <div class="tool-desc">Telegram канал</div>
+                        </div>
+                        <span class="badge badge-tg">Telegram</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/pl12_fs_probiv_bot" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">PL12 FS Probiv</div>
+                            <div class="tool-desc">Telegram бот</div>
+                        </div>
+                        <span class="badge badge-tg">Bot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/timbersclanbot" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Timber Clan Bot</div>
+                            <div class="tool-desc">Telegram бот</div>
+                        </div>
+                        <span class="badge badge-tg">Bot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/probiv_spy_c6uv_bot" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Probiv Spy</div>
+                            <div class="tool-desc">Telegram бот</div>
+                        </div>
+                        <span class="badge badge-tg">Bot</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-                    <!-- Категория 2: Telegram инструменты (запрошенные) -->
-                    <li class="expanded">
-                        <span class="node category" onclick="toggleNode(this)">
-                            <span class="toggle-icon">▶</span> 📱 Telegram OSINT
-                        </span>
-                        <ul>
-                            <li>
-                                <a href="https://t.me/timbersvek" target="_blank" class="node telegram">Канал: Timber Svek</a>
-                            </li>
-                            <li>
-                                <a href="https://t.me/pl12_fs_probiv_bot" target="_blank" class="node telegram">Бот: PL12 FS Probiv</a>
-                            </li>
-                            <li>
-                                <a href="https://t.me/timbersclanbot" target="_blank" class="node telegram">Бот: Timber Clan Bot</a>
-                            </li>
-                            <li>
-                                <a href="https://t.me/probiv_spy_c6uv_bot" target="_blank" class="node telegram">Бот: Probiv Spy</a>
-                            </li>
-                        </ul>
-                    </li>
+        <!-- Категория: Имена пользователей -->
+        <div class="category-card" data-category="username social">
+            <div class="category-title"><span class="icon">👤</span> Поиск по никнейму</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://github.com/sherlock-project/sherlock" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Sherlock</div>
+                            <div class="tool-desc">Поиск аккаунтов по юзернейму (CLI)</div>
+                        </div>
+                        <span class="badge badge-os">Open Source</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://whatsmyname.app/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">WhatsMyName</div>
+                            <div class="tool-desc">Веб-версия поиска по никам</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://namechk.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Namechk</div>
+                            <div class="tool-desc">Проверка доступности имён в соцсетях</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-                    <!-- Категория 3: Заглушки для реалистичности (можно расширить) -->
-                    <li>
-                        <span class="node category" onclick="toggleNode(this)">
-                            <span class="toggle-icon">▶</span> 👤 Username Search
-                        </span>
-                        <ul class="hidden">
-                            <li>
-                                <a href="https://namechk.com/" target="_blank" class="node link">Namechk</a>
-                            </li>
-                            <li>
-                                <a href="https://sherlock-project.github.io/" target="_blank" class="node link">Sherlock Project</a>
-                            </li>
-                        </ul>
-                    </li>
+        <!-- Категория: Email и утечки -->
+        <div class="category-card" data-category="email breach">
+            <div class="category-title"><span class="icon">📧</span> Email & Утечки</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://epieos.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Epieos</div>
+                            <div class="tool-desc">Поиск аккаунтов Google/Skype по email</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://haveibeenpwned.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Have I Been Pwned</div>
+                            <div class="tool-desc">Проверка утечек паролей и email</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://hunter.io/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Hunter.io</div>
+                            <div class="tool-desc">Поиск корпоративных email-адресов</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-                    <li>
-                        <span class="node category" onclick="toggleNode(this)">
-                            <span class="toggle-icon">▶</span> 🌍 Domain & IP
-                        </span>
-                        <ul class="hidden">
-                            <li>
-                                <a href="https://who.is/" target="_blank" class="node link">Whois Lookup</a>
-                            </li>
-                            <li>
-                                <a href="https://www.virustotal.com/" target="_blank" class="node link">VirusTotal</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
+        <!-- Категория: Домены и Сеть -->
+        <div class="category-card" data-category="domain ip network">
+            <div class="category-title"><span class="icon">🌐</span> Домены, IP и Сеть</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://www.shodan.io/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Shodan</div>
+                            <div class="tool-desc">Поисковик для IoT и сетевых устройств</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://censys.io/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Censys</div>
+                            <div class="tool-desc">Анализ хостов и сертификатов</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.virustotal.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">VirusTotal</div>
+                            <div class="tool-desc">Анализ файлов, доменов и IP</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://dnsdumpster.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">DNSDumpster</div>
+                            <div class="tool-desc">Исследование DNS-записей домена</div>
+                        </div>
+                        <span class="badge badge-os">Free</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Категория: Изображения и Медиа -->
+        <div class="category-card" data-category="image photo video media">
+            <div class="category-title"><span class="icon">🖼️</span> Изображения и Видео</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://yandex.ru/images/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Yandex Images</div>
+                            <div class="tool-desc">Лучший обратный поиск по картинкам (RF/CIS)</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.invid-project.eu/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">InVID WeVerify</div>
+                            <div class="tool-desc">Плагин для верификации видео и фото</div>
+                        </div>
+                        <span class="badge badge-os">Plugin</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://forensically.herokuapp.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Forensically</div>
+                            <div class="tool-desc">Анализ метаданных и клонирование изображений</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Категория: Социальные сети и Архивы -->
+        <div class="category-card" data-category="social archive telegram">
+            <div class="category-title"><span class="icon">🗄️</span> Соцсети и Архивы</div>
+            <ul class="tool-list">
+                <li>
+                    <a href="https://tgstat.com/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">TGStat</div>
+                            <div class="tool-desc">Аналитика Telegram-каналов</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://telemetr.io/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Telemetrio</div>
+                            <div class="tool-desc">Каталог и аналитика Telegram</div>
+                        </div>
+                        <span class="badge badge-web">Web</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://web.archive.org/" target="_blank" class="tool-link">
+                        <div>
+                            <div class="tool-name">Wayback Machine</div>
+                            <div class="tool-desc">Архив удалённых веб-страниц</div>
+                        </div>
+                        <span class="badge badge-os">Archive</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </main>
 
     <footer>
-        <p>⚠️ Disclaimer: Use these tools responsibly and in compliance with all applicable laws.</p>
-        <p>Hosted on GitHub Pages</p>
+        <div class="disclaimer">
+            ⚠️ <strong>Disclaimer:</strong> Используйте эти инструменты только в законных целях, для этичного хакинга, журналистских расследований или защиты собственной информации. Соблюдайте законодательство вашей страны.
+        </div>
+        <p>Hosted on GitHub Pages • Modern OSINT Directory</p>
     </footer>
 
     <script>
-        function toggleNode(element) {
-            const parentLi = element.parentElement;
-            const childUl = parentLi.querySelector('ul');
-            
-            if (childUl) {
-                childUl.classList.toggle('hidden');
-                parentLi.classList.toggle('expanded');
-            }
-        }
+        // Живой поиск по инструментам
+        const searchInput = document.getElementById('searchInput');
+        const categoryCards = document.querySelectorAll('.category-card');
 
-        // Раскрыть первые уровни при загрузке для удобства
-        document.addEventListener('DOMContentLoaded', () => {
-            const expandedNodes = document.querySelectorAll('.expanded > ul');
-            expandedNodes.forEach(ul => ul.classList.remove('hidden'));
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            categoryCards.forEach(card => {
+                const tools = card.querySelectorAll('.tool-link');
+                let hasVisibleTools = false;
+
+                tools.forEach(tool => {
+                    const name = tool.querySelector('.tool-name').textContent.toLowerCase();
+                    const desc = tool.querySelector('.tool-desc').textContent.toLowerCase();
+                    const category = card.getAttribute('data-category').toLowerCase();
+
+                    if (name.includes(query) || desc.includes(query) || category.includes(query)) {
+                        tool.classList.remove('hidden');
+                        hasVisibleTools = true;
+                    } else {
+                        tool.classList.add('hidden');
+                    }
+                });
+
+                // Скрываем всю карточку, если в ней не осталось видимых инструментов
+                if (hasVisibleTools) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>
