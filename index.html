@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Tools Directory</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #00ff9d; /* Неоновый зелёный */
+            --accent-secondary: #00b8ff; /* Неоновый голубой */
+            --line-color: #333;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--line-color);
+        }
+
+        header h1 {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        }
+
+        header p {
+            color: #888;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Древовидная структура */
+        .tree {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tree ul {
+            padding-left: 20px;
+            list-style: none;
+            position: relative;
+        }
+
+        .tree ul::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: var(--line-color);
+        }
+
+        .tree li {
+            margin: 10px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .tree li::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 15px;
+            width: 15px;
+            height: 1px;
+            background: var(--line-color);
+        }
+
+        .tree li::after {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 15px;
+            width: 1px;
+            height: 100%;
+            background: var(--line-color);
+        }
+
+        .tree li:last-child::after {
+            height: 15px;
+        }
+
+        /* Узлы дерева */
+        .node {
+            display: inline-flex;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid var(--line-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .node:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(0, 255, 157, 0.2);
+            color: #fff;
+        }
+
+        .node.root {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            cursor: default;
+        }
+
+        .node.category {
+            color: var(--accent-secondary);
+            border-color: var(--accent-secondary);
+        }
+
+        .node.link {
+            color: #fff;
+        }
+
+        .node.link::before {
+            content: '🔗 ';
+            margin-right: 8px;
+        }
+
+        .node.telegram::before {
+            content: '✈️ ';
+            margin-right: 8px;
+        }
+
+        .toggle-icon {
+            margin-right: 8px;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .expanded > .node .toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            header h1 { font-size: 1.8rem; }
+            .node { font-size: 0.85rem; padding: 6px 12px; }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: #555;
+            font-size: 0.8rem;
+            border-top: 1px solid var(--line-color);
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>OSINT DIRECTORY</h1>
+        <p>Open Source Intelligence Tools & Resources</p>
+    </header>
+
+    <div class="tree">
+        <ul>
+            <li>
+                <span class="node root">OSINT Framework</span>
+                <ul>
+                    <!-- Категория 1: Общие фреймворки -->
+                    <li class="expanded">
+                        <span class="node category" onclick="toggleNode(this)">
+                            <span class="toggle-icon">▶</span> 🌐 General Frameworks
+                        </span>
+                        <ul>
+                            <li>
+                                <a href="https://osintframework.com/" target="_blank" class="node link">OSINT Framework (Original)</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Категория 2: Telegram инструменты (запрошенные) -->
+                    <li class="expanded">
+                        <span class="node category" onclick="toggleNode(this)">
+                            <span class="toggle-icon">▶</span> 📱 Telegram OSINT
+                        </span>
+                        <ul>
+                            <li>
+                                <a href="https://t.me/timbersvek" target="_blank" class="node telegram">Канал: Timber Svek</a>
+                            </li>
+                            <li>
+                                <a href="https://t.me/pl12_fs_probiv_bot" target="_blank" class="node telegram">Бот: PL12 FS Probiv</a>
+                            </li>
+                            <li>
+                                <a href="https://t.me/timbersclanbot" target="_blank" class="node telegram">Бот: Timber Clan Bot</a>
+                            </li>
+                            <li>
+                                <a href="https://t.me/probiv_spy_c6uv_bot" target="_blank" class="node telegram">Бот: Probiv Spy</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Категория 3: Заглушки для реалистичности (можно расширить) -->
+                    <li>
+                        <span class="node category" onclick="toggleNode(this)">
+                            <span class="toggle-icon">▶</span> 👤 Username Search
+                        </span>
+                        <ul class="hidden">
+                            <li>
+                                <a href="https://namechk.com/" target="_blank" class="node link">Namechk</a>
+                            </li>
+                            <li>
+                                <a href="https://sherlock-project.github.io/" target="_blank" class="node link">Sherlock Project</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <span class="node category" onclick="toggleNode(this)">
+                            <span class="toggle-icon">▶</span> 🌍 Domain & IP
+                        </span>
+                        <ul class="hidden">
+                            <li>
+                                <a href="https://who.is/" target="_blank" class="node link">Whois Lookup</a>
+                            </li>
+                            <li>
+                                <a href="https://www.virustotal.com/" target="_blank" class="node link">VirusTotal</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <footer>
+        <p>⚠️ Disclaimer: Use these tools responsibly and in compliance with all applicable laws.</p>
+        <p>Hosted on GitHub Pages</p>
+    </footer>
+
+    <script>
+        function toggleNode(element) {
+            const parentLi = element.parentElement;
+            const childUl = parentLi.querySelector('ul');
+            
+            if (childUl) {
+                childUl.classList.toggle('hidden');
+                parentLi.classList.toggle('expanded');
+            }
+        }
+
+        // Раскрыть первые уровни при загрузке для удобства
+        document.addEventListener('DOMContentLoaded', () => {
+            const expandedNodes = document.querySelectorAll('.expanded > ul');
+            expandedNodes.forEach(ul => ul.classList.remove('hidden'));
+        });
+    </script>
+</body>
+</html>
